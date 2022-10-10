@@ -58,26 +58,43 @@ public:
 		return addresses.end();
 	}
 
-	void printVerbose() {
+	auto cbegin() const {
+		return addresses.cbegin();
+	}
+
+	auto cend() const {
+		return addresses.cend();
+	}
+
+	void printOne(std::list<Address>::const_iterator iter) const {
+		std::cout <<
+			"Imie:                  " << iter->firstName <<
+			"\nNazwisko:              " << iter->surname <<
+			"\nKod Pocztowy:          " << iter->zipCode <<
+			"\nMiasto:                " << iter->city <<
+			"\nUlica:                 " << iter->street <<
+			"\nNumer domu/mieszkania: " << iter->number;
+	}
+
+	void printVerbose() const {
 		bool first = true;
-		for (auto& obj : addresses) {
+		size_t id = 1;
+		for (auto iter = cbegin(); iter != cend(); ++iter) {
 			if (!first) {
 				std::cout << "\n----------------------------------------\n";
 			}
 			first = false;
-			std::cout <<
-				  "First Name: " << obj.firstName <<
-				"\nSurname:    " << obj.surname <<
-				"\nZip-Code:   " << obj.zipCode <<
-				"\nCity:       " << obj.city <<
-				"\nStreet:     " << obj.street <<
-				"\nNumber:     " << obj.number;
+			std::cout << "Wpis:                  " << id << '\n';
+			printOne(iter);
+			++id;
 		}
 	}
 
-	void print() {
+	void print() const {
+		size_t id = 1;
+
 		for (auto& obj : addresses) {
-			std::cout << obj.firstName << ' ' << obj.surname << '\n';
+			std::cout << id << ' ' << obj.firstName << ' ' << obj.surname << '\n';
 		}
 	}
 
@@ -85,7 +102,7 @@ public:
 		addresses.erase(iter);
 	}
 
-	void saveToFile() {
+	void saveToFile() const {
 		std::ofstream file{"db.csv.new"};
 
 		bool first = true;
@@ -136,6 +153,25 @@ public:
 			add(addr);
 		}
 	}
+
+  static Address constructAddress() {
+		AddressDatabase::Address newAddress;
+
+		std::cout << "Imie: ";
+		getline(std::cin, newAddress.firstName);
+		std::cout << "Nazwisko: ";
+		getline(std::cin, newAddress.surname);
+		std::cout << "Kod pocztowy: ";
+		getline(std::cin, newAddress.zipCode);
+		std::cout << "Miejscowosc: ";
+		getline(std::cin, newAddress.city);
+		std::cout << "Ulica (- jezeli puste): ";
+		getline(std::cin, newAddress.street);
+		std::cout << "Numer domu/mieszkania: ";
+		getline(std::cin, newAddress.number);
+
+		return newAddress;
+	}
 };
 
 
@@ -143,11 +179,54 @@ public:
 int main() {
 	AddressDatabase db;
 
-	//db.add("Jan", "Kowalski", "98-300", "Wielun", "Staszica", "13");
-	//db.add("Andrzej", "Nowak", "98-300", "Wielun", "Wyszynskiego", "7/2");
-	//db.saveToFile();
+	while (true) {
+		std::cout << "\n\nload - zaladuj baze danych\nsave - zapisz baze danych\nnew - nowy wpis\ndelete - usun wpis\nmodify - zmodyfikuj wpis\nsort - posortuj alfabetycznie\nprint - wyswietl skrocone informacje\nprintv - wyswietl wszystkie dane\n";
 
-	db.loadFromFile();
+		std::string command;
+		std::cin >> command;
 
-	db.printVerbose();
+		if (command == "load") db.loadFromFile();
+		else if (command == "save") db.saveToFile();
+		else if (command == "new") {
+			db.add(AddressDatabase::constructAddress());
+		}
+		else if (command == "modify") {
+			std::cout << "Wpis: ";
+
+			size_t entry;
+			std::cin >> entry;
+
+			auto iter = db.begin();
+			std::advance(iter, entry - 1);
+
+			std::cout << '\n';
+			db.printOne(iter);
+
+			std::cout << "\n\n";
+
+			*iter = AddressDatabase::constructAddress();
+		}
+		else if (command == "delete") {
+			std::cout << "Wpis: ";
+
+			size_t entry;
+			std::cin >> entry;
+
+			auto iter = db.begin();
+			std::advance(iter, entry - 1);
+
+			db.remove(iter);
+		}
+		else if (command == "sort") {
+			db.sort();
+		}
+		else if (command == "print") {
+			std::cout << '\n';
+			db.print();
+		}
+		else if (command == "printv") {
+			std::cout << '\n';
+			db.printVerbose();
+		}
+	}
 }
