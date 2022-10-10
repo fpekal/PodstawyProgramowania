@@ -95,6 +95,7 @@ public:
 
 		for (auto& obj : addresses) {
 			std::cout << id << ' ' << obj.firstName << ' ' << obj.surname << '\n';
+			++id;
 		}
 	}
 
@@ -188,6 +189,7 @@ int main() {
 		if (command == "load") db.loadFromFile();
 		else if (command == "save") db.saveToFile();
 		else if (command == "new") {
+			std::cin.ignore(16, '\n');
 			db.add(AddressDatabase::constructAddress());
 		}
 		else if (command == "modify") {
