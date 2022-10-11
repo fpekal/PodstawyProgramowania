@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <list>
 #include <compare>
 #include <fstream>
@@ -7,6 +7,7 @@
 
 class AddressDatabase {
 public:
+	// Struktura opisująca pojedynczy adres
 	struct Address {
 		std::string firstName;
 		std::string surname;
@@ -16,6 +17,7 @@ public:
 		std::string street;
 		std::string number;
 
+		// Space ship operator. Definiuje większość porównań między różnymi adresami.
 		std::strong_ordering operator<=>(const Address& other) const {
 			if (auto cmp = zipCode <=> other.zipCode; cmp != 0) return cmp;
 			if (auto cmp = city <=> other.city; cmp != 0) return cmp;
@@ -25,6 +27,7 @@ public:
 			return firstName <=> other.firstName;
 		}
 
+		// Brakujące porównanie
 		bool operator==(const Address& other) const {
 			return (*this <=> other) == 0;
 		}
@@ -37,6 +40,7 @@ public:
 
 	std::list<Address> addresses;
 
+	// Dodaj nowy adres do bazy danych
 	void add(std::string firstName, std::string surname, std::string zipCode, std::string city, std::string street, std::string number) {
 		addresses.emplace_back(firstName, surname, zipCode, city, street, number);
 	}
@@ -46,6 +50,7 @@ public:
 		addresses.push_back(std::forward<T>(other));
 	}
 
+	// Posortuj wpisy w bazie danych w kolejności alfabetycznej
 	void sort() {
 		addresses.sort();
 	}
@@ -66,6 +71,7 @@ public:
 		return addresses.cend();
 	}
 
+	// Wyświetl szczegółowo jeden wpis z bazy danych
 	void printOne(std::list<Address>::const_iterator iter) const {
 		std::cout <<
 			"Imie:                  " << iter->firstName <<
@@ -76,6 +82,7 @@ public:
 			"\nNumer domu/mieszkania: " << iter->number;
 	}
 
+	// Wyświetl wszystkie wpisy z bazy danych
 	void printVerbose() const {
 		bool first = true;
 		size_t id = 1;
@@ -90,6 +97,7 @@ public:
 		}
 	}
 
+	// Wyświetl wszystkie wpisy w bazie danych. Jeden wpis na jedną linię
 	void print() const {
 		size_t id = 1;
 
@@ -99,10 +107,12 @@ public:
 		}
 	}
 
+	// Usuń wpis z bazy danych
 	void remove(std::list<Address>::const_iterator iter) {
 		addresses.erase(iter);
 	}
 
+	// Zapisz bazę danych do pliku db.csv
 	void saveToFile() const {
 		std::ofstream file{"db.csv.new"};
 
@@ -129,6 +139,7 @@ public:
 		system("ren db.csv.new db.csv");
 	}
 
+	// Załaduj bazę danych z pliku db.csv
 	void loadFromFile() {
 		std::ifstream file{ "db.csv" };
 		if (!file.is_open()) {
@@ -155,9 +166,11 @@ public:
 		}
 	}
 
-  static Address constructAddress() {
+	// Włącz kreatora nowego wpisu do bazy
+	static Address constructAddress() {
 		AddressDatabase::Address newAddress;
 
+		std::cin.ignore(16, '\n');
 		std::cout << "Imie: ";
 		getline(std::cin, newAddress.firstName);
 		std::cout << "Nazwisko: ";
@@ -189,7 +202,6 @@ int main() {
 		if (command == "load") db.loadFromFile();
 		else if (command == "save") db.saveToFile();
 		else if (command == "new") {
-			std::cin.ignore(16, '\n');
 			db.add(AddressDatabase::constructAddress());
 		}
 		else if (command == "modify") {

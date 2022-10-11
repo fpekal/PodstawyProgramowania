@@ -1,25 +1,29 @@
-#include <iostream>
+﻿#include <iostream>
 #include <forward_list>
 
-
-typedef int HanoiPart;
+// Pojedynczy krążek to liczba oznaczająca jego rozmiar
+typedef size_t HanoiPart;
 
 class HanoiTower : private std::forward_list<HanoiPart> {
+    // Dodaje krążek omijając testy wielkości krążków
     void forceAdd(HanoiPart part) {
         push_front(part);
         ++size;
     }
 
+    // Usuwa ostatni krążek
     void forceRemove() {
         if (size == 0) return;
         pop_front();
         --size;
     }
 
+    // Sprawdza czy można przenieść krążek z innej wieży
     bool checkSwap(const HanoiTower& other) const {
         return other.getFirst() < getFirst();
     }
 
+    // Zwraca pierwszy krążek. Jeżeli nie ma żadnego krążka to zwraca 99999
     HanoiPart getFirst() const {
         if (size == 0) return 99999;
         return *cbegin();
@@ -47,6 +51,7 @@ public:
         return std::forward_list<HanoiPart>::end();
     }
 
+    // Przenosi krążek z jednej wieży na drugą
     bool swapOne(HanoiTower& other) {
         if (!checkSwap(other)) return false;
 
@@ -56,6 +61,7 @@ public:
         return true;
     }
 
+    // Zwraca wielkość wieży
     size_t getSize() const {
         return size;
     }
@@ -75,20 +81,24 @@ class HanoiGame {
     HanoiTower b;
     HanoiTower c;
     
+    // Zwraca wieżę na podstawie jej numeru
     HanoiTower& getTower(int i) {
         if (i == 1) return a;
         else if (i == 2) return b;
         return c;
     }
 
+    // Przenosi kursor do pisania tekstu na ekranie, aby można było napisać tekst w dowolnym miejscu na ekranie
     static void moveCursor(int x, int y) {
         std::cout << "\x1b[" << y << ";" << x << "f";
     }
 
+    // Czyści cały ekran
     static void clearScreen() {
         std::cout << "\x1b[2J";
     }
 
+    // Wyświetla jeden krążek w miejscu kursora
     static void printHanoiPart(HanoiPart part) {
         for (int i = 0; i < parts_count - part; ++i) {
             std::cout << ' ';
@@ -98,9 +108,10 @@ class HanoiGame {
         }
     }
 
+    // Wyświetla całą wieżę
     void printTower(const HanoiTower& tower, int shift) {
         int i = 1;
-        const int y_shift = parts_count - tower.getSize();
+        const int y_shift = parts_count - (int)tower.getSize();
 
         const int x_shift = shift * (parts_count * 2 + 2);
 
@@ -117,6 +128,7 @@ class HanoiGame {
     }
 
 public:
+    // Wyświetla wszystkie wieże
     void print() {
         clearScreen();
 
@@ -127,6 +139,7 @@ public:
         moveCursor(1, parts_count + 3);
     }
 
+    // Sterowanie grą
     void control() {
         std::cout << "> ";
         int first, second;

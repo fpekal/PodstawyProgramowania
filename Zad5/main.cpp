@@ -40,10 +40,10 @@ const std::unordered_map<char, int> ctoi {
     {'X', 33},
     {'Y', 34},
     {'Z', 35}
-};
+};  // std::unordered_map ctoi
 
 // Tablica do zamieniania int'ów na znaki. `itoc[10] == 'A'`
-constexpr std::array<char, 36> itoc{
+constexpr std::array<char, 36> itoc {
     '0', '1', '2', '3', '4',
     '5', '6', '7', '8', '9',
     'A', 'B', 'C', 'D', 'E',
@@ -59,7 +59,7 @@ constexpr std::array<char, 36> itoc{
 size_t convertToInt(const char* str, size_t size, size_t base) {
     if (size == 1) return ctoi.at(*str);
 
-    return convertToInt(str + 1, size - 1, base) + ctoi.at(*str) * std::pow(base, size - 1);
+    return convertToInt(str + 1, size - 1, base) + ctoi.at(*str) * (size_t)std::pow(base, size - 1);
 }
 
 // Przekonwertuj std::string na int'a
