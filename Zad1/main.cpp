@@ -208,7 +208,7 @@ public:
 	};	// class iterator
 
 	iterator begin() const {
-		iterator ret;
+		iterator ret{};
 		ret.n = first;
 		return ret;
 	}
@@ -287,7 +287,7 @@ struct Circle : Shape {
 
 	Circle(float r) : r{ r } {}
 };	// struct Circle
-const float Circle::PI = 3.1415926535f;
+const float Circle::PI = 3.1415926536f;
 
 void displayShapesList(list<Shape*>& l, size_t cursor_position) {
 	size_t iter = 0;

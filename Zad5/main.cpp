@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <unordered_map>
 #include <array>
+#include <algorithm>
+#include <cstring>
 
 // Słownik do zamieniania znaków na inty. `ctoi['A'] == 10`
 const std::unordered_map<char, int> ctoi {
@@ -54,12 +56,19 @@ constexpr std::array<char, 36> itoc {
     'Z'
 };
 
+// Zamienia małe znaki na duże znaki
+char charToUpper(char in) {
+    if (in >= 'a' && in <= 'z') in = in - 'a' + 'A';
+
+    return in;
+}
+
 
 // Przekonwertuj const char* na int'a
 size_t convertToInt(const char* str, size_t size, size_t base) {
-    if (size == 1) return ctoi.at(*str);
+    if (size == 1) return ctoi.at(charToUpper(*str));
 
-    return convertToInt(str + 1, size - 1, base) + ctoi.at(*str) * (size_t)std::pow(base, size - 1);
+    return convertToInt(str + 1, size - 1, base) + ctoi.at(charToUpper(*str)) * (size_t)std::pow(base, size - 1);
 }
 
 // Przekonwertuj std::string na int'a

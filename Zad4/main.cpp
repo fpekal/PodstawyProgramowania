@@ -88,7 +88,7 @@ class HanoiGame {
         return c;
     }
 
-    // Przenosi kursor do pisania tekstu na ekranie, aby można było napisać tekst w dowolnym miejscu na ekranie
+    // Przenosi kursor do pisania tekstu na ekranie, aby można było napisać tekst w dowolnym miejscu
     static void moveCursor(int x, int y) {
         std::cout << "\x1b[" << y << ";" << x << "f";
     }
@@ -115,10 +115,9 @@ class HanoiGame {
 
         const int x_shift = shift * (parts_count * 2 + 2);
 
-        for (auto iter = tower.cbegin(); iter != tower.cend(); ++iter) {
+        for (auto iter = tower.cbegin(); iter != tower.cend(); ++iter, ++i) {
             moveCursor(x_shift + 1, i + y_shift);
             printHanoiPart(*iter);
-            ++i;
         }
 
         moveCursor(x_shift + 1, parts_count + 1);
@@ -132,7 +131,7 @@ public:
     void print() {
         clearScreen();
 
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3; ++i) {
             printTower(getTower(i), i - 1);
         }
 
